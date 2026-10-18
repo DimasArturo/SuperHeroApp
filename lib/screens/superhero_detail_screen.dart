@@ -7,6 +7,39 @@ class SuperheroDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final stats = [
+      (
+        label: "Power",
+        value: superhero.powerStatsResponse.power,
+        color: Colors.red,
+      ),
+      (
+        label: "Intelligence",
+        value: superhero.powerStatsResponse.intelligence,
+        color: Colors.blue,
+      ),
+      (
+        label: "Strength",
+        value: superhero.powerStatsResponse.strength,
+        color: Colors.grey,
+      ),
+      (
+        label: "Speed",
+        value: superhero.powerStatsResponse.speed,
+        color: Colors.green,
+      ),
+      (
+        label: "Durability",
+        value: superhero.powerStatsResponse.durability,
+        color: Colors.deepOrange,
+      ),
+      (
+        label: "Combat",
+        value: superhero.powerStatsResponse.combat,
+        color: Colors.black,
+      ),
+    ];
+
     return Scaffold(
       appBar: AppBar(title: Text("Superhero ${superhero.name}")),
       body: Column(
@@ -37,86 +70,47 @@ class SuperheroDetailScreen extends StatelessWidget {
             width: double.infinity,
             height: 130,
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Container(
-                      height: double.parse(superhero.powerStatsResponse.power),
-                      width: 20,
-                      color: Colors.red,
+              children: stats
+                  .map(
+                    (stat) => _StatBar(
+                      label: stat.label,
+                      value: stat.value,
+                      color: stat.color,
                     ),
-                    Text("Power"),
-                  ],
-                ),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Container(
-                      height: double.parse(
-                        superhero.powerStatsResponse.intelligence,
-                      ),
-                      width: 20,
-                      color: Colors.blue,
-                    ),
-                    Text("Intelligence"),
-                  ],
-                ),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Container(
-                      height: double.parse(
-                        superhero.powerStatsResponse.strength,
-                      ),
-                      width: 20,
-                      color: Colors.grey,
-                    ),
-                    Text("strength"),
-                  ],
-                ),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Container(
-                      height: double.parse(superhero.powerStatsResponse.speed),
-                      width: 20,
-                      color: Colors.green,
-                    ),
-                    Text("Speed"),
-                  ],
-                ),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Container(
-                      height: double.parse(
-                        superhero.powerStatsResponse.durability,
-                      ),
-                      width: 20,
-                      color: Colors.deepOrange,
-                    ),
-                    Text("Durability"),
-                  ],
-                ),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Container(
-                      height: double.parse(superhero.powerStatsResponse.combat),
-                      width: 20,
-                      color: Colors.black,
-                    ),
-                    Text("Combat"),
-                  ],
-                ),
-              ],
+                  )
+                  .toList(),
             ),
           ),
         ],
       ),
+    );
+  }
+}
+
+class _StatBar extends StatelessWidget {
+  const _StatBar({
+    required this.label,
+    required this.value,
+    required this.color,
+  });
+
+  final String label;
+  final String value;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    final parsedValue = double.tryParse(value) ?? 0;
+    final barHeight = parsedValue.clamp(0.0, 100.0);
+
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        Container(height: barHeight, width: 20, color: color),
+        Text(label),
+      ],
     );
   }
 }
