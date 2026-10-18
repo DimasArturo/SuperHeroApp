@@ -6,11 +6,14 @@ class SuperheroResponse {
   SuperheroResponse({required this.response, required this.result});
 
   factory SuperheroResponse.fromJson(Map<String, dynamic> json) {
-    var list = json["results"] as List;
-    List<SuperheroDetailResponse> heroList = list
+    final results = json["results"];
+    final heroList = (results is List ? results : const [])
         .map((hero) => SuperheroDetailResponse.fromJson(hero))
         .toList();
 
-    return SuperheroResponse(response: json["response"], result: heroList);
+    return SuperheroResponse(
+      response: json["response"] as String? ?? "error",
+      result: heroList,
+    );
   }
 }

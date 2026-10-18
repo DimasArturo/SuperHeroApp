@@ -31,9 +31,12 @@ class _SuperHeroSearchScreenState extends State<SuperHeroSearchScreen> {
                 border: OutlineInputBorder(),
               ),
               onChanged: (text) {
+                final query = text.trim();
                 setState(() {
-                  _isTextEmpty = text.isEmpty;
-                  _superheroInfo = _repository.fetchSuperheroInfo(text);
+                  _isTextEmpty = query.isEmpty;
+                  _superheroInfo = _isTextEmpty
+                      ? null
+                      : _repository.fetchSuperheroInfo(query);
                 });
               },
             ),
@@ -54,16 +57,17 @@ class _SuperHeroSearchScreenState extends State<SuperHeroSearchScreen> {
         } else if (snapshot.hasError) {
           return Text("Error: ${snapshot.error}");
         } else if (snapshot.hasData) {
-          var superheroList = snapshot.data?.result;
+          final superheroList = snapshot.data!.result;
+          if (superheroList.isEmpty) {
+            return const Expanded(
+              child: Center(child: Text("No se encontraron superhéroes")),
+            );
+          }
           return Expanded(
             child: ListView.builder(
-              itemCount: superheroList?.length ?? 0,
+              itemCount: superheroList.length,
               itemBuilder: (context, index) {
-                if (superheroList != null) {
-                  return itemSuperhero(superheroList[index]);
-                } else {
-                  return Text("Error");
-                }
+                return itemSuperhero(superheroList[index]);
               },
             ),
           );
@@ -98,6 +102,16 @@ class _SuperHeroSearchScreenState extends State<SuperHeroSearchScreen> {
                 width: double.infinity,
                 fit: BoxFit.cover,
                 alignment: Alignment(0, -0.6),
+                errorBuilder: (context, error, stackTrace) => const ColoredBox(
+                  color: Colors.black12,
+                  child: Center(
+                    child: Icon(
+                      Icons.broken_image_outlined,
+                      size: 64,
+                      color: Colors.black45,
+                    ),
+                  ),
+                ),
               ),
             ),
             Padding(
